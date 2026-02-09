@@ -39,32 +39,33 @@
             cursor: grab;
             -webkit-overflow-scrolling: touch;
         }
-
         .gallery-wrapper::-webkit-scrollbar { display: none; }
 
         .polaroid {
             flex: 0 0 auto;
-            width: 260px;
+            width: 280px;
             margin: 0 20px;
             background: white;
-            padding: 15px 15px 40px 15px;
+            padding: 15px 15px 45px 15px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             scroll-snap-align: center;
             transition: transform 0.4s ease;
-            cursor: pointer; /* Makes it obvious you can click */
+            cursor: pointer;
         }
 
+        /* Spacers to center the first and last images */
         .gallery-wrapper::before,
         .gallery-wrapper::after {
             content: '';
-            flex: 0 0 calc(50vw - 150px);
+            flex: 0 0 calc(50vw - 160px);
         }
 
         .polaroid img {
             width: 100%;
             height: 300px;
             object-fit: cover;
-            pointer-events: none; /* Keeps drag smooth while allowing click on the div */
+            pointer-events: none;
+            border: 1px solid #eee;
         }
 
         .polaroid p {
@@ -73,11 +74,19 @@
             font-size: 1.1rem;
             text-align: center;
             font-family: 'Brush Script MT', cursive;
+            line-height: 1.2;
         }
 
-        .date-label { display: block; font-size: 0.8rem; color: #888; font-family: sans-serif; }
+        .date-label {
+            display: block;
+            font-size: 0.75rem;
+            color: #888;
+            font-family: 'Segoe UI', sans-serif;
+            margin-top: 8px;
+            font-style: normal;
+        }
 
-        /* --- LIGHTBOX MODAL STYLES --- */
+        /* Modal / Lightbox */
         .modal {
             display: none;
             position: fixed;
@@ -93,16 +102,10 @@
             max-width: 90%;
             max-height: 80%;
             border: 10px solid white;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
             animation: zoomIn 0.3s ease;
         }
 
         @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-        .close {
-            position: absolute; top: 20px; right: 30px;
-            color: white; font-size: 40px; font-weight: bold; cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -117,7 +120,6 @@
     <div class="gallery-wrapper" id="gallery"></div>
 
     <div id="imageModal" class="modal" onclick="this.style.display='none'">
-        <span class="close">&times;</span>
         <img class="modal-content" id="enlargedImg">
     </div>
 
@@ -128,18 +130,29 @@
         const folder = 'C&T/'; 
 
         const imageData = [
-            { name: 'IMG_0463.jpeg', date: '9/2/2026' }, { name: 'IMG_0479.jpeg', date: '9/2/2026' },
-            { name: 'IMG_0481.jpeg', date: '9/2/2026' }, { name: 'IMG_0486.jpeg', date: '9/2/2026' },
-            { name: 'IMG_0834.jpeg', date: '9/2/2026' }, { name: 'IMG_0848.jpeg', date: '9/2/2026' },
-            { name: 'IMG_0868.jpeg', date: '9/2/2026' }, { name: 'IMG_3199.jpeg', date: '9/2/2026' },
-            { name: 'IMG_3346.jpeg', date: '9/2/2026' }, { name: 'IMG_3539.jpeg', date: '9/2/2026' },
-            { name: 'IMG_3560.jpeg', date: '9/2/2026' }, { name: 'IMG_4647.jpeg', date: '9/2/2026' },
-            { name: 'IMG_4818.jpeg', date: '9/2/2026' }, { name: 'IMG_4826.JPEG', date: '9/2/2026' },
-            { name: 'IMG_7791.jpeg', date: '9/2/2026' }, { name: 'IMG_7852.jpeg', date: '9/2/2026' },
-            { name: 'IMG_7858.jpeg', date: '9/2/2026' }, { name: 'IMG_7998.jpeg', date: '9/2/2026' },
-            { name: 'IMG_8004.jpeg', date: '9/2/2026' }, { name: 'IMG_8011.jpeg', date: '9/2/2026' },
-            { name: 'IMG_8016.jpeg', date: '9/2/2026' }, { name: 'IMG_8697.jpeg', date: '9/2/2026' },
-            { name: 'IMG_9180.jpeg', date: '9/2/2026' }
+            { name: 'IMG_8016.jpeg', date: '6/15/2025', note: 'Our first official date pic ❤️' },
+            { name: 'IMG_3560.jpeg', date: '6/22/2025', note: 'I love the hair color that time' },
+            { name: 'IMG_8697.jpeg', date: '6/22/2025', note: 'I love u' },
+            { name: 'IMG_4647.jpeg', date: '6/29/2025', note: 'miss u' },
+            { name: 'IMG_4818.jpeg', date: '7/3/2025', note: 'date by the beach' },
+            { name: 'IMG_9180.jpeg', date: '7/3/2025', note: 'dont eat my face' },
+            { name: 'IMG_7791.jpeg', date: '8/30/2025', note: '蚊子' },
+            { name: 'IMG_7852.jpeg', date: '9/1/2025', note: 'im so handsome' },
+            { name: 'IMG_7858.jpeg', date: '9/2/2025', note: '你偷拍' },
+            { name: 'IMG_7998.jpeg', date: '9/6/2025', note: 'first night out' },
+            { name: 'IMG_8004.jpeg', date: '9/6/2025', note: 'u so sexy' },
+            { name: 'IMG_8011.jpeg', date: '9/6/2025', note: 'im so sexy' },
+            { name: 'IMG_4826.JPEG', date: '11/8/2025', note: 'love u in red' },
+            { name: 'IMG_0463.jpeg', date: '12/7/2025', note: 'why i look so dumb' },
+            { name: 'IMG_3199.jpeg', date: '12/7/2025', note: 'tried my best to hold u in a piece' },
+            { name: 'IMG_0479.jpeg', date: '12/7/2025', note: 'i had fun' },
+            { name: 'IMG_0481.jpeg', date: '12/7/2025', note: 'i had fun II' },
+            { name: 'IMG_0486.jpeg', date: '12/8/2025', note: '冰淇淋好吃嗎' },
+            { name: 'IMG_3346.jpeg', date: '12/24/2025', note: 'Our Christmas date 🎄' },
+            { name: 'IMG_0834.jpeg', date: '12/31/2025', note: 'My favorite birthday trip 🎂' },
+            { name: 'IMG_0848.jpeg', date: '12/31/2025', note: 'My favorite birthday dinner' },
+            { name: 'IMG_0868.jpeg', date: '12/31/2025', note: 'My favorite birthday dinner' },
+            { name: 'IMG_3539.jpeg', date: '1/1/2026', note: 'Times Square countdown with you ❤️' }
         ];
 
         imageData.forEach(img => {
@@ -147,21 +160,19 @@
             div.className = 'polaroid';
             div.innerHTML = `
                 <img src="${folder}${img.name}">
-                <p>❤️ <span class="date-label">${img.date}</span></p>
+                <p>${img.note}<span class="date-label">${img.date}</span></p>
             `;
             
-            // This event listener handles the click
-            div.addEventListener('mouseup', (e) => {
-                if (!isDragging) { // Only enlarge if the user didn't swipe
+            div.addEventListener('mouseup', () => {
+                if (!isDragging) {
                     modal.style.display = "flex";
                     modalImg.src = folder + img.name;
                 }
             });
-
             gallery.appendChild(div);
         });
 
-        // ZOOM LOGIC ON SCROLL
+        // ZOOM LOGIC
         gallery.addEventListener('scroll', () => {
             const polaroids = document.querySelectorAll('.polaroid');
             const centerX = window.innerWidth / 2;
@@ -174,26 +185,20 @@
         });
 
         // DRAG LOGIC
-        let isDown = false;
-        let isDragging = false;
-        let startX, scrollLeft;
-
+        let isDown = false, isDragging = false, startX, scrollLeft;
         gallery.addEventListener('mousedown', (e) => {
-            isDown = true;
-            isDragging = false;
+            isDown = true; isDragging = false;
             startX = e.pageX - gallery.offsetLeft;
             scrollLeft = gallery.scrollLeft;
             gallery.style.scrollSnapType = 'none';
         });
-
         gallery.addEventListener('mousemove', (e) => {
             if (!isDown) return;
-            isDragging = true; // If the mouse moves while down, it's a swipe, not a click
+            isDragging = true;
             const x = e.pageX - gallery.offsetLeft;
             const walk = (x - startX) * 2;
             gallery.scrollLeft = scrollLeft - walk;
         });
-
         gallery.addEventListener('mouseup', () => {
             isDown = false;
             gallery.style.scrollSnapType = 'x mandatory';
